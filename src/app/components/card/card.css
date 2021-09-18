@@ -1,0 +1,12 @@
+.card {
+  display: flex;
+  border: 2px solid black;
+  flex-basis: 19%;
+  justify-content: center;
+  align-items: center;
+  height: 8vh;
+}
+
+.card > label {
+  text-align: center;
+}

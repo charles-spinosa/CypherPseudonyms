@@ -1,0 +1,10 @@
+.Player-list {
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.Player-list > header {
+  text-align: center;
+  margin-top: 10px;
+}
