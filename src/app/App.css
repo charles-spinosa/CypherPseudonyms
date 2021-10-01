@@ -2,7 +2,7 @@
   display: grid;
   width: 100%;
   height: 100%;
-  grid-template-columns: [left-edge] auto [right-board-edge] 15vw [right-edge];
+  grid-template-columns: [left-edge] auto [right-board-edge] min-content [right-edge];
   grid-template-rows: [top-page] 15vh [top-board] auto [bottom-board] 15vh [top-footer] 10vh [bottom-page];
 }
 
