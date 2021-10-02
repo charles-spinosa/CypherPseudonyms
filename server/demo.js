@@ -1,6 +1,6 @@
 const ws = require('ws');
 
-const gameEngine = require('../gameEngine');
+const gameEngine = require('../src/gameEngine');
 
 var wsClient = new ws('ws://localhost:8080');
 wsClient.on('open', () => wsClient.send(JSON.stringify({operation: 'request-initial-board-state'})))

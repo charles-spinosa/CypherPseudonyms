@@ -5,6 +5,11 @@
   justify-content: center;
   align-items: center;
   height: 8vh;
+  background-color: tan;
+}
+
+.revealed {
+  opacity: 0.2;
 }
 
 .card > label {

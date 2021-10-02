@@ -1,6 +1,6 @@
 const express = require('express');
 const ws = require('ws');
-const gameEngine = require('../../gameEngine');
+const gameEngine = require('../../src/gameEngine');
 
 const DEMO_WORDS = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty one', 'twenty two', 'twenty three', 'twenty four', 'twenty five'];
 
