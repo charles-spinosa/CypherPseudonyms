@@ -13,28 +13,26 @@ const DEMO_PLAYERS = [{name: 'john', team: 0}, {name: 'dan', team: 1}, {name: 'c
 
 function App() {
   const [words, setWords] = useState([]);
-  const [activeTeam, setActiveTeam] = useState(null);
+  const [isLeader, setIsLeader] = useState(false);
   let connection = useRef(null);
 
-  let game2 = null;
+  let game2 = useRef(null);
 
   useEffect(() => {
-    connection.current = new WebSocket('ws://localhost:8080');
+    connection.current = new WebSocket('ws://192.168.1.136:8080');
     connection.current.onopen = () => connection.current.send(JSON.stringify({operation: 'request-initial-board-state'}));
     
     const messageParser = message => {
       const response = JSON.parse(message.data);
       if (response.operation === 'return-initial-board-state') {
-        game2 = new gameEngine.CypherBoard(response.words, response.activeTurn)
-        setWords(game2.words);
+        game2.current = new gameEngine.CypherBoard(response.words, response.activeTurn)
+        console.log(game2.current.words);
+        setWords(game2.current.words);
       }
       else if (response.operation === 'card-revealed') {
-        if (game2) game2.revealCard(response.index);
-        console.log('i received a card flip, I should update')
-        setWords(game2.words);
+        if (game2.current) game2.current.revealCard(response.index);
+        setWords(game2.current.words.slice());
       }
-    
-      if (game2) console.log(game2.words)
     }
     
     connection.current.onmessage = messageParser;
@@ -49,8 +47,15 @@ function App() {
       operation: 'reveal-card',
       index: idx
     }
-    console.log({this: this}, {game2});
-    game2.revealCard(idx);
+    game2.current.revealCard(idx);
+    connection.current.send(JSON.stringify(message));
+  }
+
+  const resetGame = () => {
+    setWords([]);
+    const message = {
+      operation: 'reset-board'
+    }
     connection.current.send(JSON.stringify(message));
   }
   return (
@@ -58,8 +63,10 @@ function App() {
       <header className="App-header">
         <h1>Let's play some Cypher Pseudonyms</h1>
       </header>
-      <Board words={words} className='Game-board' revealCard={revealCard}/>
+      <Board words={words} className='Game-board' revealCard={revealCard} revealHidden={isLeader}/>
       <section className='role-based-controls'>
+        <input type='checkbox' value={isLeader} onClick={() => setIsLeader(!isLeader)}/>
+        <button onClick={resetGame}>Reset Game</button>
         {<ClueGiverControls /> || <GuesserControls />}
       </section>
       <GameLobby players={DEMO_PLAYERS} className='Game-lobby'/>

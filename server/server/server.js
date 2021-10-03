@@ -8,12 +8,11 @@ const appServer = express();
 // sets up a "headless" (what does headless mean: that the ws server doesn't come attached to an http/s one. so a single http/s could manage multiple ws servers) server that prints any events that come in
 const wsServer = new ws.Server({noServer: true});
 
-const game = new gameEngine.CypherBoard(DEMO_WORDS);
+let game = new gameEngine.CypherBoard(DEMO_WORDS);
 
 const messageParserFactory = socket => message => {
   console.log('server receiving message')
   const request = JSON.parse(message.toString());
-  console.log(request);
   if (request.operation === 'request-initial-board-state') {
     const board = {operation: 'return-initial-board-state', words: game.words, activeTurn: game.activeTurn}
     socket.send(JSON.stringify(board));
@@ -24,6 +23,14 @@ const messageParserFactory = socket => message => {
       operation: 'card-revealed', 
       index: request.index
     })))
+  }
+  else if (request.operation === 'reset-board') {
+    game = new gameEngine.CypherBoard(DEMO_WORDS);
+    message = {
+      operation: 'return-initial-board-state',
+      words: game.words
+    }
+    wsServer.clients.forEach(client => client.send(JSON.stringify(message)))
   }
 }
 
