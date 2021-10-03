@@ -52,7 +52,6 @@ function App() {
   }
 
   const resetGame = () => {
-    setWords([]);
     const message = {
       operation: 'reset-board'
     }
