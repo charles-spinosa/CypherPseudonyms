@@ -19,17 +19,19 @@ function App() {
   let game2 = useRef(null);
 
   useEffect(() => {
-    connection.current = new WebSocket('ws://192.168.1.136:8080');
-    connection.current.onopen = () => connection.current.send(JSON.stringify({operation: 'request-initial-board-state'}));
-    
+    connection.current = new WebSocket('ws://localhost:8080');
+    connection.current.onopen = () => connection.current.send(JSON.stringify({operation: 'full-game-state'}));
+  
+    // I decided to try and minimize data update size by only delivering small messages about individual game moves.
+    // instead of sending game-moves, I could just send the state tree, then diffs on the tree.
+    // How would I define "diffs" of a nested thing.... hmm...
     const messageParser = message => {
       const response = JSON.parse(message.data);
-      if (response.operation === 'return-initial-board-state') {
+      if (response.operation === 'full-game-state') {
         game2.current = new gameEngine.CypherBoard(response.words, response.activeTurn)
-        console.log(game2.current.words);
         setWords(game2.current.words);
       }
-      else if (response.operation === 'card-revealed') {
+      else if (response.operation === 'reveal-card') {
         if (game2.current) game2.current.revealCard(response.index);
         setWords(game2.current.words.slice());
       }
